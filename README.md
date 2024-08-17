@@ -10,3 +10,7 @@ A service where you can track down your lost pet. Uses publicly available geotag
   - A user submitted form page which contains details of the pet. Users are known as “spotters”.
 - PetFinderServices.xyz
   - Processes and indexes search queries and submissions. Constantly updates location data for registered pets.
+
+## Hardware
+
+tags

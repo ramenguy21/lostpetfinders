@@ -1,0 +1,28 @@
+{
+  "name": "lostpetfinders",
+  "version": "1.0.0",
+  "description": "A service where you can track down your lost pet. Uses publicly available geotag devices / human submitted “spots” to locate a pet matching your description. Anyone can freely register to be a “spotter”. Any visitor can “quick locate” their pet using a google-esque query bar.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node ./server.js",
+    "start": "cross-env NODE_ENV=production node ./server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@remix-run/express": "^2.11.1",
+    "@remix-run/node": "^2.11.1",
+    "@remix-run/react": "^2.11.1",
+    "cross-env": "^7.0.3",
+    "express": "^4.19.2",
+    "isbot": "^4.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^2.11.1",
+    "vite": "^5.4.0"
+  }
+}
