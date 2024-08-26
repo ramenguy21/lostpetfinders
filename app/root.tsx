@@ -10,7 +10,6 @@ import {
   Scripts,
   ScrollRestoration,
   useRouteError,
-  useNavigate
 } from "@remix-run/react";
 import { ReactNode } from "react";
 
@@ -24,47 +23,39 @@ export const links: LinksFunction = () => [
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ user: await getUser(request) });
-  
 };
 
-export function ErrorBoundary(props : any) : ReactNode {
-  const error = useRouteError();
-  
-  function goBack(){
-    window.history.back()
+interface ErrorBoundaryProps {
+  children: ReactNode; // `children` prop to render inside the boundary
 }
 
-  // when true, this is what used to go to `CatchBoundary`
+export function ErrorBoundary({ children }: ErrorBoundaryProps): ReactNode {
+  const error = useRouteError();
+
+  function goBack() {
+    window.history.back();
+  }
+
   if (isRouteErrorResponse(error)) {
     return (
       <div>
         <h1>Oops</h1>
-        <p>something went a lil fuwwy wuvvy :3</p>
+        <p>Something went a lil fuwwy wuvvy :3</p>
         <p>{error.data.message}</p>
         <button className="bg-gray-500 text-blue-200" onClick={goBack}>
-          
-          Go back ?</button>
+          Go back ?
+        </button>
       </div>
     );
   }
 
-  // Don't forget to typecheck with your own logic.
-  // Any value can be thrown, not just errors!
-  let errorMessage = "Unknown error";
-  /**if (isDefinitelyAnError(error)) {
-    errorMessage = error.message;
-  }**/
+  // Fallback for other errors
+  //let errorMessage = "Unknown error";
 
-  return (
-    //should pass in the children inside the boundary ...
-    <div>
-    {props.children}
-    </div>
-  );
+  return <div>{children}</div>;
 }
 
 export default function App() {
-
   return (
     <html lang="en" className="h-full">
       <head>
@@ -75,10 +66,10 @@ export default function App() {
       </head>
       <body className="h-full">
         <ErrorBoundary>
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
+          <Outlet />
+          <ScrollRestoration />
+          <Scripts />
+          <LiveReload />
         </ErrorBoundary>
       </body>
     </html>
