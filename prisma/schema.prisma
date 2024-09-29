@@ -1,16 +1,29 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String?
   password String
+}
+
+model Spot {
+  id          Int      @id @default(autoincrement())
+  spotterId   Int
+  taxonomy    String
+  lng         Float
+  lat         Float
+  timestamp   DateTime
+  description String?
+  pictures    String
+  claimed     Boolean
 }

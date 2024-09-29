@@ -1,56 +1,79 @@
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import {
+  AdvancedMarker,
+  APILoadingStatus,
+  InfoWindow,
+  Map,
+  Pin,
+  useAdvancedMarkerRef,
+  useApiLoadingStatus,
+} from "@vis.gl/react-google-maps";
+import { useEffect } from "react";
 
-export default function SpotMap() {
+interface SpotMapProps {
+  spots: google.maps.LatLngLiteral[];
+}
+
+export default function SpotMap({ spots }: SpotMapProps) {
+  const status = useApiLoadingStatus();
+
+  useEffect(() => {
+    if (status === APILoadingStatus.FAILED) {
+      console.log("Failed to load google maps API.");
+    }
+    return;
+  }, [status]);
+
   const containerStyle = {
-    margin: "auto",
     width: "100%",
     height: "400px",
   };
 
-  const center = {
+  const defaultCenter = {
     lat: 37.772,
     lng: -122.214,
   };
 
-  const MARKER_POSITION: google.maps.LatLngLiteral = {
-    lat: 37.772,
-    lng: -122.214,
-  };
-
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    //find a way around this at some point ...
-    googleMapsApiKey: "",
-  });
+  function renderMarkers() {
+    switch (spots.length) {
+      case 0:
+        return null;
+      case 1:
+        return (
+          <AdvancedMarker key={0} position={spots[0]}>
+            <Pin
+              background={"#22ccff"}
+              borderColor={"#1e89a1"}
+              glyphColor={"#0f677a"}
+            ></Pin>
+          </AdvancedMarker>
+        );
+      default:
+        return spots.map((spot, idx) => {
+          return (
+            <AdvancedMarker key={idx} position={spot}>
+              <Pin
+                background={"#22ccff"}
+                borderColor={"#1e89a1"}
+                glyphColor={"#0f677a"}
+              ></Pin>
+            </AdvancedMarker>
+          );
+        });
+    }
+  }
 
   return (
     <div>
-      {isLoaded ? (
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={center}
-          zoom={10}
-          //onLoad={onLoad}
-          //onUnmount={onUnmount}
-        >
-          {/* Child components, such as markers, info windows, etc. */}
-          <Marker position={MARKER_POSITION} />
-          <Marker
-            position={{
-              lat: 37.771,
-              lng: -122.214,
-            }}
-          />
-          <Marker
-            position={{
-              lat: 37.77,
-              lng: -122.214,
-            }}
-          />
-        </GoogleMap>
-      ) : (
-        <p>Map loading</p>
-      )}
+      <Map
+        defaultCenter={defaultCenter}
+        mapId="main"
+        defaultZoom={3}
+        gestureHandling={"greedy"}
+        controlled={false}
+        style={containerStyle}
+      >
+        {renderMarkers()}
+      </Map>
     </div>
   );
 }

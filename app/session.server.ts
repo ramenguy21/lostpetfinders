@@ -97,3 +97,7 @@ export async function logout(request: Request) {
     },
   });
 }
+
+export function getMapApiKey(): string {
+  return process.env.GOOGLE_MAPS_API_KEY || "";
+}

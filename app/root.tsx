@@ -9,12 +9,16 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useRouteError,
 } from "@remix-run/react";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
-import { getUser } from "~/session.server";
+import { getUser, getMapApiKey } from "~/session.server";
 import stylesheet from "~/tailwind.css";
+import { APIProvider as MapsAPIProvider } from "@vis.gl/react-google-maps";
+import React from "react";
+import { Layout } from "./components/layout";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -22,7 +26,7 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  return json({ user: await getUser(request) });
+  return json({ user: await getUser(request), apikey: getMapApiKey() });
 };
 
 interface ErrorBoundaryProps {
@@ -55,7 +59,12 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps): ReactNode {
   return <div>{children}</div>;
 }
 
+// suppress useLayoutEffect (and its warnings) when not running in a browser
+if (typeof window === "undefined") React.useLayoutEffect = () => {};
+
 export default function App() {
+  const data = useLoaderData<typeof loader>();
+
   return (
     <html lang="en" className="h-full">
       <head>
@@ -64,12 +73,17 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body className="overflow-y-none no-scroll h-full">
         <ErrorBoundary>
-          <Outlet />
-          <ScrollRestoration />
-          <Scripts />
-          <LiveReload />
+          <MapsAPIProvider apiKey={data.apikey}>
+            <Layout>
+              <Outlet />
+            </Layout>
+
+            <ScrollRestoration />
+            <Scripts />
+            <LiveReload />
+          </MapsAPIProvider>
         </ErrorBoundary>
       </body>
     </html>
