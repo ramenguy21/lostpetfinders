@@ -5,7 +5,7 @@ import SpotMap from "~/components/map";
 import ProductCard from "~/components/product";
 import PetFinderSearch from "~/components/search_bar";
 import { getRecentSpots } from "~/models/spot.server";
-import { useOptionalUser } from "~/utils";
+//import { useOptionalUser } from "~/utils";
 
 export const meta: MetaFunction = () => [{ title: "Lost Pet Finders" }];
 
@@ -14,7 +14,7 @@ export const loader = async () => {
 };
 
 export default function Index() {
-  const user = useOptionalUser();
+  //const user = useOptionalUser();
   const navigate = useNavigate();
   const data = useLoaderData<typeof loader>();
   return (
@@ -31,10 +31,10 @@ export default function Index() {
         </div>
         <div className="my-6">
           <h1 className="text-4xl font-bold text-primary">
-            Think you've seen someone's pet ?
+            Think you&apos;ve seen someone&apos;s pet ?
           </h1>
           <p className="text-xl font-light">
-            You might be able to help someone recover their loved one.
+            {" You might be able to help someone recover their loved one."}
           </p>
           <button
             onClick={() => navigate("/spot/new")}
@@ -48,7 +48,7 @@ export default function Index() {
             Lost a Pet recently ?
           </h1>
           <p className="text-xl font-light">
-            Get us some details and we'll try our best to help.
+            Get us some details and we&apos;ll try our best to help.
           </p>
           <PetFinderSearch />
           <div className="my-6">
@@ -78,7 +78,7 @@ export default function Index() {
             <h1 className="text-4xl font-bold text-primary">
               Looking for a 🐾 home ?
             </h1>
-            <p className="text-xl font-light">We'll help !</p>
+            <p className="text-xl font-light">We&apos;ll help !</p>
             <button className="text-white my-3 rounded bg-primary p-3 text-xl text-neutral">
               Post an <span className="font-bold text-accent">adoption</span>
             </button>

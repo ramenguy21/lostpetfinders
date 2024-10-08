@@ -60,7 +60,10 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps): ReactNode {
 }
 
 // suppress useLayoutEffect (and its warnings) when not running in a browser
-if (typeof window === "undefined") React.useLayoutEffect = () => {};
+if (typeof window === "undefined")
+  React.useLayoutEffect = () => {
+    return;
+  };
 
 export default function App() {
   const data = useLoaderData<typeof loader>();

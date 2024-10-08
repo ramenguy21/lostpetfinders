@@ -68,7 +68,7 @@ export default function NewSpotForm() {
   //const [imgSources, setImgSources] = useState<string[]>([]); // Store uploaded image src
 
   useEffect(() => {
-    if (typeof window !== undefined) {
+    if (window) {
       window.navigator.geolocation.getCurrentPosition((location) => {
         if (location) {
           setPos({
@@ -184,8 +184,10 @@ export default function NewSpotForm() {
                 className="rounded bg-primary p-2 text-neutral"
                 name="colors"
               >
-                {Object.values(Color).map((arg) => (
-                  <option value={arg}>{arg.toLocaleLowerCase()}</option>
+                {Object.values(Color).map((arg, idx) => (
+                  <option key={idx} value={arg}>
+                    {arg.toLocaleLowerCase()}
+                  </option>
                 ))}
               </select>
             </div>
@@ -198,8 +200,10 @@ export default function NewSpotForm() {
                 className="rounded bg-primary p-2 text-neutral"
                 name="tailType"
               >
-                {Object.values(TailType).map((arg) => (
-                  <option value={arg}>{arg.toLocaleLowerCase()}</option>
+                {Object.values(TailType).map((arg, idx) => (
+                  <option key={idx} value={arg}>
+                    {arg.toLocaleLowerCase()}
+                  </option>
                 ))}
               </select>
             </div>
@@ -296,7 +300,7 @@ export default function NewSpotForm() {
                     className="ml-3 h-[15rem] w-auto"
                     key={idx}
                     src={URL.createObjectURL(img)}
-                    alt={`uploaded image ${idx + 1}`}
+                    alt={`upload ${idx + 1}`}
                   />
                 ) : null,
               )}
