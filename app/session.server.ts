@@ -72,7 +72,7 @@ export async function createUserSession({
   redirectTo,
 }: {
   request: Request;
-  userId: number;
+  userId: string;
   remember: boolean;
   redirectTo: string;
 }) {
