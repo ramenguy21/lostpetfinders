@@ -1,10 +1,8 @@
 import {
   AdvancedMarker,
   APILoadingStatus,
-  InfoWindow,
   Map,
   Pin,
-  useAdvancedMarkerRef,
   useApiLoadingStatus,
 } from "@vis.gl/react-google-maps";
 import { useEffect } from "react";

@@ -1,4 +1,5 @@
 import { LoaderFunction, json, LoaderFunctionArgs } from "@remix-run/node";
+
 import { searchSpot } from "~/models/spot.server";
 
 export const loader: LoaderFunction = async ({
@@ -10,6 +11,8 @@ export const loader: LoaderFunction = async ({
   const results = await search(query);
   return json({ results });
 };
+
+//https://www.jacobparis.com/content/use-debounce-fetcher
 
 // Mock NLP search function (replace with actual NLP logic)
 async function search(query: string) {

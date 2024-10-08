@@ -2,8 +2,7 @@
 
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Spot } from "@prisma/client";
-import { redirect } from "@remix-run/node";
+import { spots } from "@prisma/client";
 import { useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
@@ -12,7 +11,7 @@ const PetFinderSearch = () => {
   const [searchText, setSearchText] = useState("");
   //loading must always start with a default value of false
   const [loading, setLoading] = useState(false);
-  const [responses, setResponses] = useState<Spot[]>([]);
+  const [responses, setResponses] = useState<spots[]>([]);
 
   function handleSearch(query: string) {
     setLoading(true);
@@ -20,7 +19,7 @@ const PetFinderSearch = () => {
     fetch(`/search?query=${encodeURIComponent(query)}`).then((res) => {
       res
         .json()
-        .then((resp: { results: Spot[] }) => {
+        .then((resp: { results: spots[] }) => {
           setResponses(resp.results);
           setLoading(false);
         })
@@ -43,6 +42,7 @@ const PetFinderSearch = () => {
       <div className="mx-2 flex w-full flex-col">
         <label className="py-2">Description</label>
         <input
+          name="search"
           onChange={(event) => {
             //need to add some sort of a special debounce such that only the latest text entry is excecuted and all previous intent to search are cancelled,
             //perhaps some event such as userIsTyping ? or wait for a debounce before initiating the request
@@ -57,9 +57,10 @@ const PetFinderSearch = () => {
               <FontAwesomeIcon className="ml-2" icon={faSpinner} />
             </p>
           ) : null}
-          {responses !== null || typeof responses !== undefined
-            ? responses.map((resp) => (
+          {responses !== null
+            ? responses.map((resp, idx) => (
                 <div
+                  key={idx}
                   onClick={() => {
                     navigate(`/spot/${resp.id}`);
                   }}
@@ -77,7 +78,7 @@ const PetFinderSearch = () => {
         <select className="rounded bg-accent p-2">
           <option value="cat">Cate</option>
           <option value="dog">Doggo</option>
-          <option value="">I'm Lazy</option>
+          <option value="">{"I'm Lazy"}</option>
         </select>
       </div>
     </div>

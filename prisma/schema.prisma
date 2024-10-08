@@ -5,25 +5,100 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
 }
 
-model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  name     String?
-  password String
+enum TailType {
+  STRAIGHT       // Common in cats, dogs, and parrots
+  CURLY          // Common in certain dog breeds
+  BOBBED         // Common in certain dog breeds (natural or docked)
+  FEATHERED      // Common in parrots and certain dog breeds
+  PLUME          // Seen in parrots and some dogs
+  BUSHY          // Typical of fluffy cats and certain dog breeds
+  SHORT          // Common for some cats (Manx) and certain dog breeds
+  LONG           // Common for cats, dogs, and parrots with extended tails
+  DOCKED         // Common in some dog breeds (tail surgically shortened)
 }
 
-model Spot {
-  id          Int      @id @default(autoincrement())
-  spotterId   Int
+enum Color {
+  BLACK
+  WHITE
+  BROWN
+  GOLDEN
+}
+
+model users {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  spots     spots[]
+}
+
+model spots {
+  id          String   @id @default(uuid())
+  spotterId   String
+  user        users    @relation(fields: [spotterId], references: [id])
+  breedId     String?
+  breed       breeds?  @relation(fields: [breedId], references: [id])
   taxonomy    String
   lng         Float
   lat         Float
-  timestamp   DateTime
+  address     String?
+  colors      Color[]
+  coatType    String?
+  age         Int?
+  tailType    TailType?
+  mark        String?
   description String?
-  pictures    String
   claimed     Boolean
+  timestamp   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  media       media[]
+}
+
+model lost_pets {
+  id         String   @id @default(uuid())
+  userId     String
+  name       String
+  breed      breeds?  @relation(fields: [breedId], references: [id])
+  breedId    String?
+  taxonomy   String
+  temprament String
+  height     Int
+  weight     Int
+  colors     Color[]
+  coatType   String
+  tailType   TailType
+  timestamp  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  media      media[]
+}
+
+model media {
+  id        String     @id @default(uuid())
+  spotId    String?
+  spot      spots?     @relation(fields: [spotId], references: [id])
+  lostPetId String?
+  lostPet   lost_pets? @relation(fields: [lostPetId], references: [id])
+  url       String
+  createdAt DateTime   @default(now())
+  //Need to add a check here to ensure either spot or lostPet is populated
+}
+
+model breeds {
+  id         String      @id @default(uuid())
+  name       String
+  taxonomy   String
+  temprament String
+  height     Int
+  weight     Int
+  colors     Color[]
+  coatType   String
+  tailType   TailType 
+  createdAt  DateTime    @default(now())
+  spots      spots[]
+  lost_pets  lost_pets[]
 }

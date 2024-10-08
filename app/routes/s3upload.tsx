@@ -1,44 +1,26 @@
-import {
-  json,
-  unstable_composeUploadHandlers,
-  unstable_createMemoryUploadHandler,
-  unstable_parseMultipartFormData,
-  type ActionFunctionArgs,
-  type UploadHandler,
-} from "@remix-run/node";
+import { randomUUID } from "node:crypto";
+
+import { type ActionFunctionArgs } from "@remix-run/node";
+
 import { s3UploadHandler } from "~/utils/s3.server";
-import { Form, useFetcher } from "@remix-run/react";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const uploadHandler: UploadHandler = unstable_composeUploadHandlers(
-    s3UploadHandler,
-    //2 MB upload limit.
-    unstable_createMemoryUploadHandler({ maxPartSize: 2000000 }),
-  );
-  try {
-    const formData = await unstable_parseMultipartFormData(
-      request,
-      uploadHandler,
-    );
-    //console.log("FORMDATA:", Array.from(formData.values())); // Debug
+  const media_urls: string[] = [];
+  const formData = await request.formData();
+  for (const [_, value] of formData.entries()) {
+    if (value instanceof File) {
+      const extensionRegex = new RegExp("[^.]+$");
+      const fileExtension = value.name.match(extensionRegex);
 
-    const imgSrc = formData.get("img");
-    const imgDesc = formData.get("desc");
+      const url = await s3UploadHandler(
+        value,
 
-    if (!imgSrc || typeof imgSrc !== "string") {
-      return json({
-        errorMsg: "Something went wrong while uploading.",
-      });
+        randomUUID() + `.${fileExtension}`,
+      );
+      media_urls.push(url || "");
+    } else {
+      return { errorMsg: "There was an error uploading images." };
     }
-
-    return json({
-      imgSrc,
-      imgDesc,
-    });
-  } catch (error) {
-    console.error(error); // Debug
-    return json({
-      errorMsg: "Something went wrong while parsing.",
-    });
   }
+  return { imgSources: media_urls };
 };

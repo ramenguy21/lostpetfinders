@@ -1,8 +1,8 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import {
   isRouteErrorResponse,
+  json,
   Links,
   LiveReload,
   Meta,
@@ -12,12 +12,12 @@ import {
   useLoaderData,
   useRouteError,
 } from "@remix-run/react";
-import { ReactNode, useEffect } from "react";
+import { APIProvider as MapsAPIProvider } from "@vis.gl/react-google-maps";
+import React, { ReactNode } from "react";
 
 import { getUser, getMapApiKey } from "~/session.server";
 import stylesheet from "~/tailwind.css";
-import { APIProvider as MapsAPIProvider } from "@vis.gl/react-google-maps";
-import React from "react";
+
 import { Layout } from "./components/layout";
 
 export const links: LinksFunction = () => [
@@ -44,7 +44,7 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps): ReactNode {
     return (
       <div>
         <h1>Oops</h1>
-        <p>Something went a lil fuwwy wuvvy :3</p>
+        <p>{"Something went a lil fuwwy wuvvy :3"}</p>
         <p>{error.data.message}</p>
         <button className="bg-gray-500 text-blue-200" onClick={goBack}>
           Go back ?

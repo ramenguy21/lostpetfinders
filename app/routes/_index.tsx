@@ -1,19 +1,15 @@
-import {
-  LoaderFunctionArgs,
-  redirect,
-  type MetaFunction,
-} from "@remix-run/node";
+import { type MetaFunction } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
+
 import SpotMap from "~/components/map";
 import ProductCard from "~/components/product";
 import PetFinderSearch from "~/components/search_bar";
 import { getRecentSpots } from "~/models/spot.server";
-
 import { useOptionalUser } from "~/utils";
 
 export const meta: MetaFunction = () => [{ title: "Lost Pet Finders" }];
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async () => {
   return await getRecentSpots(10);
 };
 
