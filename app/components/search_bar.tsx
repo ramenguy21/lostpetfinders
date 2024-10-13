@@ -52,13 +52,8 @@ const PetFinderSearch = () => {
           }}
           className="rounded bg-accent p-2"
         />
+
         <div className="w-full">
-          {loading ? (
-            <p className="rounded bg-primary p-2 text-2xl text-secondary">
-              Loading ...
-              <FontAwesomeIcon className="ml-2" icon={faSpinner} />
-            </p>
-          ) : null}
           {responses !== null
             ? responses.map((resp, idx) => (
                 <div
@@ -81,6 +76,15 @@ const PetFinderSearch = () => {
             : null}
         </div>
       </div>
+
+      {loading ? <div className="mt-6 p-2">
+          <FontAwesomeIcon
+            size="2x"
+            color="#FF6F3C"
+            className="ml-2 animate-spin"
+            icon={faSpinner}
+          />
+        </div> : null}
 
       <div className="flex flex-col">
         <label htmlFor="taxonomy" className="py-2">

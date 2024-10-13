@@ -50,6 +50,14 @@ export default function Index() {
           <p className="text-xl font-light">
             Get us some details and we&apos;ll try our best to help.
           </p>
+          <button
+            onClick={() => navigate("/lostpet/new")}
+            className="text-white my-3 rounded bg-primary p-3 text-xl text-neutral"
+          >
+            Put out an <span className="font-bold text-accent">alert.</span>
+          </button>
+          <p>OR</p>
+          <p className="text-xl font-light">Search up our submitted spots.</p>
           <PetFinderSearch />
           <div className="my-6">
             <h1 className="text-4xl font-bold text-primary">

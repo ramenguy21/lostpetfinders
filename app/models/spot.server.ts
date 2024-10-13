@@ -32,7 +32,6 @@ export async function createSpot(
 
   try {
     const res = await db;
-    console.log("new spot inserted", res);
     return res;
   } catch (error) {
     console.error(error);

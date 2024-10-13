@@ -2,10 +2,11 @@ import {
   AdvancedMarker,
   APILoadingStatus,
   Map,
-  Pin,
   useApiLoadingStatus,
 } from "@vis.gl/react-google-maps";
 import { useEffect } from "react";
+
+import pawIcon from "../assets/icons/paw.svg";
 
 interface SpotMapProps {
   spots: google.maps.LatLngLiteral[];
@@ -38,22 +39,18 @@ export default function SpotMap({ spots }: SpotMapProps) {
       case 1:
         return (
           <AdvancedMarker key={0} position={spots[0]}>
-            <Pin
-              background={"#22ccff"}
-              borderColor={"#1e89a1"}
-              glyphColor={"#0f677a"}
-            ></Pin>
+            <span>
+              <img className="rounded bg-primary p-1" src={pawIcon} alt="" />
+            </span>
           </AdvancedMarker>
         );
       default:
         return spots.map((spot, idx) => {
           return (
             <AdvancedMarker key={idx} position={spot}>
-              <Pin
-                background={"#22ccff"}
-                borderColor={"#1e89a1"}
-                glyphColor={"#0f677a"}
-              ></Pin>
+              <span>
+                <img className="rounded bg-primary p-1" src={pawIcon} alt="" />
+              </span>
             </AdvancedMarker>
           );
         });

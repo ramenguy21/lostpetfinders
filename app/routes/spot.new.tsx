@@ -4,6 +4,7 @@ import { Form, useFetcher } from "@remix-run/react";
 import { AdvancedMarker, Map as GoogleMap } from "@vis.gl/react-google-maps";
 import { useEffect, useRef, useState } from "react";
 
+import { SvgSpinnersBarsScaleFade } from "~/components/icons";
 import { createSpot } from "~/models/spot.server";
 
 interface ActionData {
@@ -107,32 +108,33 @@ export default function NewSpotForm() {
     const response = await fetch("/s3upload", {
       method: "POST",
       body: imgData,
+      //headers
     });
 
-    if (!response.ok) {
-      throw new Error(`Error uploading images: ${response.statusText}`);
-    }
+    try {
+      const res_body = await response.json();
 
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
+      if (res_body.errorMsg) {
+        console.error(`Error uploading images: ${response.statusText}`);
+        return;
+      }
 
-    //set the breed id
-    formData.append("breedId", selectedBreedId);
+      const form = e.target as HTMLFormElement;
+      const formData = new FormData(form);
 
-    const imgSources: string[] = [];
-    await response
-      .json()
-      .then((data) =>
-        data.imgSources.map((imgSrc: string) => imgSources.push(imgSrc)),
-      )
-      .catch((err) =>
-        console.error(`Error parsing uploaded img sources ${err}`),
+      //set the breed id
+      formData.append("breedId", selectedBreedId);
+      //attach imgSources
+      res_body.imgSources.map((imgSrc: string) =>
+        formData.append("img", imgSrc),
       );
 
-    // Attach the image URL to the spot data
-    imgSources?.map((imgSrc: string) => formData.append("img", imgSrc));
-    // Then submit the form data
-    fetcher.submit(formData, { action: "/spot/new", method: "POST" });
+      // Then submit the form data
+      fetcher.submit(formData, { action: "/spot/new", method: "POST" });
+    } catch (err) {
+      console.error(err);
+      return;
+    }
   };
 
   return (
@@ -143,10 +145,10 @@ export default function NewSpotForm() {
       <p className="font-italic bg-secondary text-center text-lg text-neutral">
         Please fill out these details.
       </p>
-      <div className="flex flex-col-reverse justify-between md:flex md:flex-row">
+      <div className="m-auto flex flex-col-reverse justify-between md:flex md:flex-row">
         {/* Spot Form */}
         <Form
-          className="mx-5 flex w-1/2 flex-col justify-center"
+          className="mx-5 flex flex-col justify-center md:w-1/2"
           action="/spot/new"
           method="POST"
           onSubmit={handleSpotSubmit} // Submit handler
@@ -175,7 +177,7 @@ export default function NewSpotForm() {
             />
           </div>
 
-          <div className="flex justify-evenly">
+          <div className="flex-col justify-evenly md:flex md:flex-row">
             <div className="flex flex-col">
               <label className="p-2 text-sm" htmlFor="colors">
                 Color
@@ -221,7 +223,7 @@ export default function NewSpotForm() {
               </select>
             </div>
           </div>
-          <div className="my-2 flex justify-evenly">
+          <div className="my-2 flex-col justify-evenly md:flex md:flex-row">
             <div className="flex flex-col">
               <label className="p-2 text-sm" htmlFor="age">
                 Age
@@ -321,7 +323,7 @@ export default function NewSpotForm() {
               }}
               id="img-upload"
               type="file"
-              name="img"
+              name="img-upload"
               accept="image/*"
               multiple
             />
@@ -330,7 +332,10 @@ export default function NewSpotForm() {
             type="submit"
             className="my-3 rounded bg-primary p-3 text-xl text-neutral"
           >
-            Submit Spot
+            Submit Spot{" "}
+            {fetcher.state === "submitting" ? <i>
+                <SvgSpinnersBarsScaleFade />
+              </i> : null}
           </button>
         </Form>
         <div className="align-center mx-2 mt-5 flex flex-col">
