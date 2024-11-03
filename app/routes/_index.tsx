@@ -19,8 +19,8 @@ export default function Index() {
   const data = useLoaderData<typeof loader>();
   return (
     <main className="bg-white sm:flex sm:items-center sm:justify-center">
-      <div className="">
-        <div className="my-6">
+      <div className="mx-2">
+        <div className="my-6 flex w-full flex-col justify-around sm:h-96 sm:flex-row">
           <SpotMap
             spots={Array.from(
               data.map((spot) => {
@@ -28,6 +28,19 @@ export default function Index() {
               }) || [],
             )}
           />
+          <div className="mx-4 overflow-y-scroll">
+            <h1 className="text-2xl font-bold text-primary">Recent Spots</h1>
+            {data.map((spot) => (
+              <button
+                key={spot.id}
+                onClick={() => navigate(`spot/${spot.id}`)}
+                className="my-2 flex w-full flex-col rounded border p-1 hover:bg-accent hover:text-neutral"
+              >
+                <h1 className="font-bold">{spot.taxonomy}</h1>
+                <p className="text-sm">{spot.description || "-"}</p>
+              </button>
+            ))}
+          </div>
         </div>
         <div className="my-6">
           <h1 className="text-4xl font-bold text-primary">
@@ -87,7 +100,10 @@ export default function Index() {
               Looking for a 🐾 home ?
             </h1>
             <p className="text-xl font-light">We&apos;ll help !</p>
-            <button className="text-white my-3 rounded bg-primary p-3 text-xl text-neutral">
+            <button
+              onClick={() => navigate("/adoption")}
+              className="text-white my-3 rounded bg-primary p-3 text-xl text-neutral"
+            >
               Post an <span className="font-bold text-accent">adoption</span>
             </button>
           </div>

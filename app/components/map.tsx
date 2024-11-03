@@ -4,15 +4,16 @@ import {
   Map,
   useApiLoadingStatus,
 } from "@vis.gl/react-google-maps";
-import { useEffect } from "react";
+import { CSSProperties, useEffect } from "react";
 
 import pawIcon from "../assets/icons/paw.svg";
 
 interface SpotMapProps {
   spots: google.maps.LatLngLiteral[];
+  styles?: CSSProperties;
 }
 
-export default function SpotMap({ spots }: SpotMapProps) {
+export default function SpotMap({ spots, styles = {} }: SpotMapProps) {
   const status = useApiLoadingStatus();
 
   useEffect(() => {
@@ -58,17 +59,15 @@ export default function SpotMap({ spots }: SpotMapProps) {
   }
 
   return (
-    <div>
-      <Map
-        defaultCenter={defaultCenter}
-        mapId="main"
-        defaultZoom={3}
-        gestureHandling={"greedy"}
-        controlled={false}
-        style={containerStyle}
-      >
-        {renderMarkers()}
-      </Map>
-    </div>
+    <Map
+      defaultCenter={defaultCenter}
+      mapId="main"
+      defaultZoom={3}
+      gestureHandling={"greedy"}
+      controlled={false}
+      style={{ ...containerStyle, ...styles }}
+    >
+      {renderMarkers()}
+    </Map>
   );
 }

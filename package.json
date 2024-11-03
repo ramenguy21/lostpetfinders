@@ -4,6 +4,7 @@
   "sideEffects": false,
   "scripts": {
     "build": "remix build",
+    "update:db": "prisma db push",
     "dev": "remix dev -c \"npm run dev:serve\"",
     "dev:serve": "binode --require ./mocks -- @remix-run/serve:remix-serve ./build/index.js",
     "format": "prettier --write .",
@@ -27,7 +28,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@prisma/client": "^5.20.0",
+    "@prisma/client": "^5.21.1",
     "@react-google-maps/api": "^2.19.3",
     "@remix-run/css-bundle": "^2.11.2",
     "@remix-run/node": "^2.11.2",

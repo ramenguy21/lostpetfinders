@@ -45,6 +45,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     claimed: false,
     timestamp: new Date(),
     createdAt: new Date(),
+    lostPetId: null,
   };
 
   try {
@@ -161,8 +162,8 @@ export default function NewSpotForm() {
               className="rounded bg-primary p-2 text-neutral"
               name="taxonomy"
             >
-              <option>Doggo</option>
-              <option>Catto</option>
+              <option value="dog">Doggo</option>
+              <option value="cat">Catto</option>
             </select>
           </div>
 
@@ -333,9 +334,11 @@ export default function NewSpotForm() {
             className="my-3 rounded bg-primary p-3 text-xl text-neutral"
           >
             Submit Spot{" "}
-            {fetcher.state === "submitting" ? <i>
+            {fetcher.state === "submitting" ? (
+              <i>
                 <SvgSpinnersBarsScaleFade />
-              </i> : null}
+              </i>
+            ) : null}
           </button>
         </Form>
         <div className="align-center mx-2 mt-5 flex flex-col">

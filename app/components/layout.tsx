@@ -1,7 +1,7 @@
 import { faBars, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Form, Link } from "@remix-run/react";
-import React, { useState } from "react";
+import { Form, Link, useLocation } from "@remix-run/react";
+import React, { useEffect, useState } from "react";
 
 import { useOptionalUser } from "~/utils";
 
@@ -12,12 +12,16 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const user = useOptionalUser();
   const [sideBarOpen, setSideBarOpen] = useState(false);
-  //useEffect, whenever the route changes, close the sidebar
 
+  const { pathname } = useLocation();
+  //useEffect, whenever the route changes, close the sidebar
+  useEffect(() => {
+    setSideBarOpen(false);
+  }, [pathname]);
   //important : disabling y-scroll to not show ugly extra content
 
   return (
-    <div className="no-scrollbar">
+    <div className="no-scrollbar flex min-h-screen flex-col">
       {sideBarOpen ? (
         <aside className="fixed z-[1] h-screen w-64 bg-primary p-6 text-text md:block">
           <div className="space-evenly mb-6 flex items-center justify-around">
@@ -48,18 +52,18 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             </li>
             <li className="mb-4">
               <Link
-                to="#"
+                to="/spot/new"
                 className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
               >
-                Services
+                Report a Pet
               </Link>
             </li>
             <li>
               <Link
-                to="#"
+                to="/lostpet"
                 className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
               >
-                Support Us !
+                Find your pet.
               </Link>
             </li>
           </ul>
@@ -97,15 +101,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Link>
         )}
       </div>
-      <div className="mx-4 overflow-x-hidden md:mx-1">{children}</div>
-      <div className="absolute mx-auto my-6 h-auto w-full bg-[url('~/assets/cta_bg.jpg')] bg-cover py-10">
+
+      <div className="mx-4 flex-grow overflow-x-hidden md:mx-1">{children}</div>
+      {/*Footer */}
+      <footer className="mx-auto w-full bg-[url('~/assets/cta_bg.jpg')] bg-cover py-10">
         <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-primary">Join up !</h1>
           <button className="my-3 rounded bg-primary p-3 text-xl text-neutral">
             Register <span className="font-bold text-accent">MEOW</span>
           </button>
         </div>
-      </div>
+      </footer>
     </div>
   );
 };
