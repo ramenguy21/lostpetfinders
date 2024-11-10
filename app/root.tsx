@@ -1,21 +1,24 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import {
   isRouteErrorResponse,
+  json,
   Links,
   LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useRouteError,
-  useNavigate
 } from "@remix-run/react";
-import { ReactNode } from "react";
+import { APIProvider as MapsAPIProvider } from "@vis.gl/react-google-maps";
+import React, { ReactNode } from "react";
 
-import { getUser } from "~/session.server";
+import { getUser, getMapApiKey } from "~/session.server";
 import stylesheet from "~/tailwind.css";
+
+import { Layout } from "./components/layout";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -23,47 +26,47 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  return json({ user: await getUser(request) });
-  
+  return json({ user: await getUser(request), apikey: getMapApiKey() });
 };
 
-export function ErrorBoundary(props : any) : ReactNode {
-  const error = useRouteError();
-  
-  function goBack(){
-    window.history.back()
+interface ErrorBoundaryProps {
+  children: ReactNode; // `children` prop to render inside the boundary
 }
 
-  // when true, this is what used to go to `CatchBoundary`
+export function ErrorBoundary({ children }: ErrorBoundaryProps): ReactNode {
+  const error = useRouteError();
+
+  function goBack() {
+    window.history.back();
+  }
+
   if (isRouteErrorResponse(error)) {
     return (
       <div>
         <h1>Oops</h1>
-        <p>something went a lil fuwwy wuvvy :3</p>
+        <p>{"Something went a lil fuwwy wuvvy :3"}</p>
         <p>{error.data.message}</p>
         <button className="bg-gray-500 text-blue-200" onClick={goBack}>
-          
-          Go back ?</button>
+          Go back ?
+        </button>
       </div>
     );
   }
 
-  // Don't forget to typecheck with your own logic.
-  // Any value can be thrown, not just errors!
-  let errorMessage = "Unknown error";
-  /**if (isDefinitelyAnError(error)) {
-    errorMessage = error.message;
-  }**/
+  // Fallback for other errors
+  //let errorMessage = "Unknown error";
 
-  return (
-    //should pass in the children inside the boundary ...
-    <div>
-    {props.children}
-    </div>
-  );
+  return <div>{children}</div>;
 }
 
+// suppress useLayoutEffect (and its warnings) when not running in a browser
+if (typeof window === "undefined")
+  React.useLayoutEffect = () => {
+    return;
+  };
+
 export default function App() {
+  const data = useLoaderData<typeof loader>();
 
   return (
     <html lang="en" className="h-full">
@@ -73,12 +76,17 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body className="overflow-y-none no-scroll h-full">
         <ErrorBoundary>
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
+          <MapsAPIProvider apiKey={data.apikey}>
+            <Layout>
+              <Outlet />
+            </Layout>
+
+            <ScrollRestoration />
+            <Scripts />
+            <LiveReload />
+          </MapsAPIProvider>
         </ErrorBoundary>
       </body>
     </html>

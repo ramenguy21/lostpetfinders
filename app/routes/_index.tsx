@@ -1,58 +1,111 @@
-import type { MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
+import { type MetaFunction } from "@remix-run/node";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 
-import { useOptionalUser } from "~/utils";
+import SpotMap from "~/components/map";
+import ProductCard from "~/components/product";
+import PetFinderSearch from "~/components/search_bar";
+import { getRecentSpots } from "~/models/spot.server";
+//import { useOptionalUser } from "~/utils";
 
 export const meta: MetaFunction = () => [{ title: "Lost Pet Finders" }];
 
+export const loader = async () => {
+  return await getRecentSpots(10);
+};
+
 export default function Index() {
-  const user = useOptionalUser();
+  //const user = useOptionalUser();
+  const navigate = useNavigate();
+  const data = useLoaderData<typeof loader>();
   return (
-    <main className="relative min-h-screen bg-white sm:flex sm:items-center sm:justify-center">
-      <div className="relative sm:pb-16 sm:pt-8">
-        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="relative shadow-xl sm:overflow-hidden sm:rounded-2xl">
-            <div className="absolute inset-0">
-              <img
-                className="h-full w-full object-cover"
-                src="https://user-images.githubusercontent.com/1500684/157774694-99820c51-8165-4908-a031-34fc371ac0d6.jpg"
-                alt="Sonic Youth On Stage"
+    <main className="bg-white sm:flex sm:items-center sm:justify-center">
+      <div className="mx-2">
+        <div className="my-6 flex w-full flex-col justify-around sm:h-96 sm:flex-row">
+          <SpotMap
+            spots={Array.from(
+              data.map((spot) => {
+                return { lat: spot.lat, lng: spot.lng };
+              }) || [],
+            )}
+          />
+          <div className="mx-4 overflow-y-scroll">
+            <h1 className="text-2xl font-bold text-primary">Recent Spots</h1>
+            {data.map((spot) => (
+              <button
+                key={spot.id}
+                onClick={() => navigate(`spot/${spot.id}`)}
+                className="my-2 flex w-full flex-col rounded border p-1 hover:bg-accent hover:text-neutral"
+              >
+                <h1 className="font-bold">{spot.taxonomy}</h1>
+                <p className="text-sm">{spot.description || "-"}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="my-6">
+          <h1 className="text-4xl font-bold text-primary">
+            Think you&apos;ve seen someone&apos;s pet ?
+          </h1>
+          <p className="text-xl font-light">
+            {" You might be able to help someone recover their loved one."}
+          </p>
+          <button
+            onClick={() => navigate("/spot/new")}
+            className="text-white my-3 rounded bg-primary p-3 text-xl text-neutral"
+          >
+            Submit a <span className="font-bold text-accent">spot.</span>
+          </button>
+        </div>
+        <div className="my-6">
+          <h1 className="text-4xl font-bold text-primary">
+            Lost a Pet recently ?
+          </h1>
+          <p className="text-xl font-light">
+            Get us some details and we&apos;ll try our best to help.
+          </p>
+          <button
+            onClick={() => navigate("/lostpet/new")}
+            className="text-white my-3 rounded bg-primary p-3 text-xl text-neutral"
+          >
+            Put out an <span className="font-bold text-accent">alert.</span>
+          </button>
+          <p>OR</p>
+          <p className="text-xl font-light">Search up our submitted spots.</p>
+          <PetFinderSearch />
+          <div className="my-6">
+            <h1 className="text-4xl font-bold text-primary">
+              Concerned for your pets ?
+            </h1>
+            <p className="text-xl font-light">Get them a gift</p>
+            <div className="my-3 flex w-full justify-between space-x-6">
+              <ProductCard
+                img="https://fakeimg.pl/400x500?text=pet device 1"
+                heading="Pet Tracker 1"
+                id="0"
               />
-              <div className="absolute inset-0 bg-[color:rgba(254,204,27,0.5)] mix-blend-multiply" />
+              <ProductCard
+                img="https://fakeimg.pl/400x500?text=pet device 2"
+                heading="Pet Tracker 2"
+                id="1"
+              />
+              <ProductCard
+                img="https://fakeimg.pl/400x500?text=pet device 3"
+                heading="Pet Tracker 3"
+                id="2"
+              />
             </div>
-            <div className="relative px-4 pb-8 pt-16 sm:px-6 sm:pb-14 sm:pt-24 lg:px-8 lg:pb-20 lg:pt-32">
-              <h1 className="text-center text-6xl font-extrabold tracking-tight sm:text-8xl lg:text-9xl">
-                <span className="block uppercase text-yellow-500 drop-shadow-md">
-                  LOST PET FINDERS
-                </span>
-              </h1>
-              <div className="mx-auto mt-10 max-w-sm sm:flex sm:max-w-none sm:justify-center">
-                {user ? (
-                  <Link
-                    to="/lpf"
-                    className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
-                  >
-                   Enter Website
-                  </Link>
-                ) : (
-                  <div className="space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0">
-                    <Link
-                      to="/join"
-                      className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
-                    >
-                      Sign up
-                    </Link>
-                    <Link
-                      to="/login"
-                      className="flex items-center justify-center rounded-md bg-yellow-500 px-4 py-3 font-medium text-white hover:bg-yellow-600"
-                    >
-                      Log In
-                    </Link>
-                  </div>
-                )}
-              </div>
-           
-            </div>
+          </div>
+          <div className="my-6">
+            <h1 className="text-4xl font-bold text-primary">
+              Looking for a 🐾 home ?
+            </h1>
+            <p className="text-xl font-light">We&apos;ll help !</p>
+            <button
+              onClick={() => navigate("/adoption")}
+              className="text-white my-3 rounded bg-primary p-3 text-xl text-neutral"
+            >
+              Post an <span className="font-bold text-accent">adoption</span>
+            </button>
           </div>
         </div>
       </div>

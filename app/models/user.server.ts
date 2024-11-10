@@ -1,40 +1,40 @@
-import type { User } from "@prisma/client";
+import type { users } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
 
-export type { User } from "@prisma/client";
+export type { users } from "@prisma/client";
 
-export async function getUserById(id: User["id"]) {
-  const _id = parseInt(id.toString())
-  //should just be where : {id} // for some reason, id is being parsed as a string ... 
-  return prisma.user.findUnique({ where: { id : _id } });
+export async function getUserById(id: users["id"]) {
+  const _id = id.toString();
+  //should just be where : {id} // for some reason, id is being parsed as a string ...
+  return prisma.users.findUnique({ where: { id: _id } });
 }
 
-export async function getUserByEmail(email: User["email"]) {
-  return prisma.user.findUnique({ where: { email } });
+export async function getUserByEmail(email: users["email"]) {
+  return prisma.users.findUnique({ where: { email } });
 }
 
-export async function createUser(email: User["email"], password: string) {
+export async function createUser(email: users["email"], password: string) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  return prisma.user.create({
+  return prisma.users.create({
     data: {
       email,
-      password: hashedPassword
+      password: hashedPassword,
     },
   });
 }
 
-export async function deleteUserByEmail(email: User["email"]) {
-  return prisma.user.delete({ where: { email } });
+export async function deleteUserByEmail(email: users["email"]) {
+  return prisma.users.delete({ where: { email } });
 }
 
 export async function verifyLogin(
-  email: User["email"],
-  password: User["password"],
+  email: users["email"],
+  password: users["password"],
 ) {
-  const userWithPassword = await prisma.user.findUnique({
+  const userWithPassword = await prisma.users.findUnique({
     where: { email },
   });
 
@@ -42,10 +42,7 @@ export async function verifyLogin(
     return null;
   }
 
-  const isValid = await bcrypt.compare(
-    password,
-    userWithPassword.password,
-  );
+  const isValid = await bcrypt.compare(password, userWithPassword.password);
 
   if (!isValid) {
     return null;
