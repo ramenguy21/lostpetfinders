@@ -71,12 +71,16 @@ model lost_pets {
   description String?
   address     String?
   taxonomy    String
+  lng         Float
+  lat         Float
+  age         Int
   temprament  String
-  height      Int
-  weight      Int
+  height      Float?
+  weight      Float?
   colors      Color[]
   coatType    String
-  tailType    TailType
+  tailType    String
+  claimed     Boolean
   timestamp   DateTime @updatedAt
   createdAt   DateTime @default(now())
   media       media[]
@@ -99,11 +103,11 @@ model breeds {
   name       String
   taxonomy   String
   temprament String
-  height     Int
-  weight     Int
-  colors     Color[]
-  coatType   String
-  tailType   TailType
+  height     String?
+  weight     String?
+  colors     String?
+  coatType   String?
+  tailType   String?
   createdAt  DateTime    @default(now())
   spots      spots[]
   lost_pets  lost_pets[]

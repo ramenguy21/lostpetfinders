@@ -3,12 +3,12 @@ import { useLoaderData } from "@remix-run/react";
 
 import ImageCarousel from "~/components/image_carousel";
 import SpotMap from "~/components/map";
-import { getSpotMedia } from "~/models/media.server";
+import { getMedia } from "~/models/media.server";
 import { getSpotById } from "~/models/spot.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const test_spot = await getSpotById(params.id as string);
-  const spot_media = (await getSpotMedia(params.id as string)).map((md) => {
+  const spot_media = (await getMedia(params.id as string)).map((md) => {
     if (md.url) {
       return md.url;
     }

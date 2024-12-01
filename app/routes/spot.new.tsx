@@ -1,10 +1,16 @@
-import { Color, spots, TailType } from "@prisma/client";
-import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { Form, useFetcher } from "@remix-run/react";
+import { breeds, Color, spots, TailType } from "@prisma/client";
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
+import { Form, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { AdvancedMarker, Map as GoogleMap } from "@vis.gl/react-google-maps";
 import { useEffect, useRef, useState } from "react";
+import TextInput from "~/components/form/input";
 
 import { SvgSpinnersBarsScaleFade } from "~/components/icons";
+import { getAllBreeds, getBreedData } from "~/models/breeds.server";
 import { createSpot } from "~/models/spot.server";
 
 interface ActionData {
@@ -30,7 +36,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const body = await request.formData();
   const formMap = new Map(body);
   const new_spot: Omit<spots, "id"> = {
-    spotterId: "6fdad2d3-7326-4301-bd95-ad2830e94c4a", // user ID here
+    spotterId: "bcc421f9-bd17-4c47-a984-ea02eca0ef1a", // user ID here
     breedId: formMap.get("breedId")?.toString() || null,
     taxonomy: formMap.get("taxonomy")?.toString() || "",
     lng: parseFloat(formMap.get("lng")?.toString() || "0") || 0,
@@ -61,12 +67,26 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return null;
 };
 
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const breeds = await getAllBreeds();
+  let data;
+  const breedId = new URL(request.url).searchParams.get("breedId");
+  if (breedId) {
+    data = await getBreedData(breedId);
+  }
+  return { breeds, data };
+};
+
 export default function NewSpotForm() {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fetcher = useFetcher<ActionData>();
+  const breedLoader = useLoaderData<typeof loader>();
   const [images, setImages] = useState<File[]>([]);
+  const [taxonomy, setTaxonomy] = useState("Dog");
   const [selectedBreedId, setSelectedBreedId] = useState("");
   const [pos, setPos] = useState<{ lat: number; lng: number }>();
+  const [breedData, setBreedData] = useState<breeds | null>();
+  const navigate = useNavigate();
   //const [imgSources, setImgSources] = useState<string[]>([]); // Store uploaded image src
 
   useEffect(() => {
@@ -159,24 +179,16 @@ export default function NewSpotForm() {
               Type
             </label>
             <select
+              onChange={(e) => setTaxonomy(e.target.value)}
               className="rounded bg-primary p-2 text-neutral"
               name="taxonomy"
             >
-              <option value="dog">Doggo</option>
-              <option value="cat">Catto</option>
+              <option value="Dog">Doggo</option>
+              <option value="Cat">Catto</option>
             </select>
           </div>
 
-          <div className="flex flex-col">
-            <label className="p-2 text-sm" htmlFor="description">
-              Description
-            </label>
-            <input
-              className="rounded bg-primary p-2 text-neutral"
-              type="text"
-              name="description"
-            />
-          </div>
+          <TextInput label="Description" name="description" />
 
           <div className="flex-col justify-evenly md:flex md:flex-row">
             <div className="flex flex-col">
@@ -200,6 +212,7 @@ export default function NewSpotForm() {
                 Tail Type
               </label>
               <select
+                defaultValue={breedLoader.data?.tailType || ""}
                 className="rounded bg-primary p-2 text-neutral"
                 name="tailType"
               >
@@ -216,6 +229,7 @@ export default function NewSpotForm() {
                 Coat Type
               </label>
               <select
+                defaultValue={breedLoader.data?.coatType || ""}
                 className="rounded bg-primary p-2 text-neutral"
                 name="coatType"
               >
@@ -224,28 +238,10 @@ export default function NewSpotForm() {
               </select>
             </div>
           </div>
-          <div className="my-2 flex-col justify-evenly md:flex md:flex-row">
-            <div className="flex flex-col">
-              <label className="p-2 text-sm" htmlFor="age">
-                Age
-              </label>
-              <input
-                defaultValue={1}
-                type="number"
-                className="rounded bg-primary p-2 text-neutral"
-                name="age"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="p-2 text-sm" htmlFor="mark">
-                Mark
-              </label>
-              <input
-                type="text"
-                className="rounded bg-primary p-2 text-neutral"
-                name="mark"
-              />
-            </div>
+          <div className="my-2 flex-col justify-evenly space-x-2 md:flex md:flex-row">
+            <TextInput type="number" label="Age" name="age" />
+            <TextInput label="Mark" name="mark" />
+            {/*hidden inputs for lng lat coordinates.*/}
           </div>
           <input
             className="bg-primary text-neutral"
@@ -346,16 +342,23 @@ export default function NewSpotForm() {
             Best practices for a helpful spot submission
           </h1>
           <h2 className="">
-            If you know the breed of the pet, you can search it up here and use
-            it to prefill the form.
+            If you know the breed of the {taxonomy.toLowerCase()}, you can
+            search it up here and use it to prefill the form.
           </h2>
           <select
             className="mx-5 rounded bg-accent p-2 text-text"
-            onChange={(e) => setSelectedBreedId(e.target.value)}
-            value={selectedBreedId}
+            onChange={(e) =>
+              navigate(`/spot/new?breedId=${e.target.value}`, { replace: true })
+            }
+            defaultValue={breedLoader.data?.id}
           >
-            <option value={"insert-id-here"}>{"Persian (Cat)"}</option>
-            <option value="">{"Golden Retreiver (Dog)"}</option>
+            {breedLoader.breeds
+              .filter((bd) => bd.taxonomy === taxonomy)
+              .map((breed) => (
+                <option key={breed.id} value={breed.id}>
+                  {breed.name}
+                </option>
+              ))}
           </select>
         </div>
       </div>

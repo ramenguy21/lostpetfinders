@@ -22,53 +22,61 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="no-scrollbar flex min-h-screen flex-col">
-      {sideBarOpen ? (
-        <aside className="fixed z-[1] h-screen w-64 bg-primary p-6 text-text md:block">
-          <div className="space-evenly mb-6 flex items-center justify-around">
-            <button
-              className="flex rounded bg-neutral p-2"
-              onClick={() => setSideBarOpen(false)}
+      <aside
+        className={`fixed z-[1] h-screen w-64 bg-primary p-6 text-text transition-transform md:block ${sideBarOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
+        <div className="space-evenly mb-6 flex items-center justify-around">
+          <button
+            className="flex rounded bg-neutral p-2"
+            onClick={() => setSideBarOpen(false)}
+          >
+            <FontAwesomeIcon icon={faCaretLeft} />
+          </button>
+          <h2 className="text-center text-2xl font-semibold">Main Menu</h2>
+        </div>
+        <ul>
+          <li className="mb-4">
+            <Link
+              to="/"
+              className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
             >
-              <FontAwesomeIcon icon={faCaretLeft} />
-            </button>
-            <h2 className="text-center text-2xl font-semibold">Main Menu</h2>
-          </div>
-          <ul>
-            <li className="mb-4">
-              <Link
-                to="/"
-                className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
-              >
-                Home
-              </Link>
-            </li>
-            <li className="mb-4">
-              <Link
-                to="/#"
-                className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
-              >
-                About
-              </Link>
-            </li>
-            <li className="mb-4">
-              <Link
-                to="/spot/new"
-                className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
-              >
-                Report a Pet
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/lostpet"
-                className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
-              >
-                Find your pet.
-              </Link>
-            </li>
-          </ul>
-        </aside>
-      ) : null}
+              Home
+            </Link>
+          </li>
+          <li className="mb-4">
+            <Link
+              to="/#"
+              className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
+            >
+              About
+            </Link>
+          </li>
+          <li className="mb-4">
+            <Link
+              to="/spot/new"
+              className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
+            >
+              Report a Pet
+            </Link>
+          </li>
+          <li className="mb-4">
+            <Link
+              to="/lostpet"
+              className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
+            >
+              Find your pet.
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/buy"
+              className="block rounded px-4 py-2 hover:bg-secondary hover:text-neutral"
+            >
+              Products
+            </Link>
+          </li>
+        </ul>
+      </aside>
       <div className="w-vdw flex space-x-2 bg-secondary md:justify-between">
         <button
           onClick={() => setSideBarOpen(true)}

@@ -1,7 +1,8 @@
 //import { ActionFunctionArgs, json } from "@remix-run/node";
-import { useFetcher, useNavigate } from "@remix-run/react";
+import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { AdvancedMarker, Map as GoogleMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
+import TextInput from "~/components/form/input";
 
 /**export async function action({ request }: ActionFunctionArgs) {
   return json({ results: [{}, {}, {}] });
@@ -10,7 +11,6 @@ import { useEffect, useState } from "react";
 export default function SearchLostPetForm() {
   const fetcher = useFetcher();
   const navigate = useNavigate();
-
   const [pos, setPos] = useState<{ lat: number; lng: number }>();
 
   useEffect(() => {
@@ -37,8 +37,7 @@ export default function SearchLostPetForm() {
           </h1>
           <fetcher.Form method="get">
             <div className="flex flex-col">
-              <label htmlFor="name">Name</label>
-              <input name="name" className="bg-accent"></input>
+              <TextInput name="name" label="name" />
             </div>
             <div className="flex flex-col">
               <label htmlFor="type">Type</label>
