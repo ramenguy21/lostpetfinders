@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+
 import { getPetById } from "~/models/lostpet.server";
 import { getMedia } from "~/models/media.server";
 
@@ -33,7 +34,7 @@ export default function LostPetPage() {
             No spots have been reported for this pet yet.
           </p>
           <div className="my-2">
-            <p>Think you've seen them ?</p>
+            <p>Think you&apos;ve seen them ?</p>
             <button className="my-1 rounded bg-primary p-2 text-neutral">
               Create a Spot
             </button>

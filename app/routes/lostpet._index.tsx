@@ -1,7 +1,8 @@
 //import { ActionFunctionArgs, json } from "@remix-run/node";
-import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
+import { useFetcher, useNavigate } from "@remix-run/react";
 import { AdvancedMarker, Map as GoogleMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
+
 import TextInput from "~/components/form/input";
 
 /**export async function action({ request }: ActionFunctionArgs) {

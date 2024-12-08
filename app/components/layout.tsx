@@ -1,4 +1,4 @@
-import { faBars, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Form, Link, useLocation } from "@remix-run/react";
 import React, { useEffect, useState } from "react";
@@ -30,7 +30,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             className="flex rounded bg-neutral p-2"
             onClick={() => setSideBarOpen(false)}
           >
-            <FontAwesomeIcon icon={faCaretLeft} />
+            <FontAwesomeIcon icon={faClose} />
           </button>
           <h2 className="text-center text-2xl font-semibold">Main Menu</h2>
         </div>

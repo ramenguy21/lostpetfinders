@@ -1,4 +1,4 @@
-import { breeds, Color, spots, TailType } from "@prisma/client";
+import { /*breeds,*/ Color, spots, TailType } from "@prisma/client";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -7,8 +7,8 @@ import {
 import { Form, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { AdvancedMarker, Map as GoogleMap } from "@vis.gl/react-google-maps";
 import { useEffect, useRef, useState } from "react";
-import TextInput from "~/components/form/input";
 
+import TextInput from "~/components/form/input";
 import { SvgSpinnersBarsScaleFade } from "~/components/icons";
 import { getAllBreeds, getBreedData } from "~/models/breeds.server";
 import { createSpot } from "~/models/spot.server";
@@ -67,7 +67,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return null;
 };
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const breeds = await getAllBreeds();
   let data;
   const breedId = new URL(request.url).searchParams.get("breedId");
@@ -83,9 +83,9 @@ export default function NewSpotForm() {
   const breedLoader = useLoaderData<typeof loader>();
   const [images, setImages] = useState<File[]>([]);
   const [taxonomy, setTaxonomy] = useState("Dog");
-  const [selectedBreedId, setSelectedBreedId] = useState("");
+  const [selectedBreedId] = useState("");
   const [pos, setPos] = useState<{ lat: number; lng: number }>();
-  const [breedData, setBreedData] = useState<breeds | null>();
+  //const [breedData, setBreedData] = useState<breeds | null>();
   const navigate = useNavigate();
   //const [imgSources, setImgSources] = useState<string[]>([]); // Store uploaded image src
 

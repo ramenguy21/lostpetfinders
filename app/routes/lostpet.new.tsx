@@ -3,8 +3,8 @@ import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { Form, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { AdvancedMarker, Map as GoogleMap } from "@vis.gl/react-google-maps";
 import { useRef, useState } from "react";
-import TextInput from "~/components/form/input";
 
+import TextInput from "~/components/form/input";
 import { CloseIcon, SvgSpinnersBarsScaleFade } from "~/components/icons";
 import { getAllBreeds, getBreedData } from "~/models/breeds.server";
 import { createLostPet } from "~/models/lostpet.server";
@@ -253,7 +253,9 @@ export default function NewLostPetForm() {
           value={pos?.lat || 0}
         />
 
-        <label className="mt-4 p-2 text-sm">Last Seen</label>
+        <label className="mt-4 p-2 text-sm" htmlFor="last_seen">
+          Last Seen
+        </label>
         <GoogleMap
           className="mt-2 h-48 w-full"
           mapId="form"
